@@ -1,7 +1,7 @@
 import datetime
 from django.db import models
 from django.utils import timezone
-
+from django.contrib.auth.models import User
 
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
@@ -50,4 +50,11 @@ class notification(models.Model):
     username = models.CharField(max_length = 50, default = "")
     def __str__(self):
         return self.description
-    
+
+class registration(models.Model):
+    id = models.AutoField(primary_key=True)
+    eventid = models.ForeignKey(registeredevents, on_delete=models.CASCADE,default="")
+    username = models.ForeignKey(User, on_delete=models.CASCADE,default="")
+
+    def __str__(self):
+        return str(self.id)

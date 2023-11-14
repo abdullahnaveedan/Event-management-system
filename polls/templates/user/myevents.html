@@ -23,11 +23,12 @@
             <th scope="col">Type</th>
             <th scope="col">Date</th>
             <th scope="col">Location</th>
+            <th scope="col">People Registered</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          {% for i in data %}
+          {% for i, j in combined_data %}
           <tr>
             <th scope="row">{{forloop.counter}}</th>
             <td>e{{i.eventid}}</td>
@@ -35,8 +36,12 @@
             <td>{{i.type}}</td>
             <td>{{i.date}}</td>
             <td>{{i.location}}</td>
+            <td>{{j.registrations_count}}</td>
             
-            <td><a href="myevents/{{i.eventid}}"><i class="fa-solid fa-trash"></i></a></td>
+            <td>
+              <a href="myevents/d-{{i.eventid}}"><i class="fa-solid fa-bell fa-sm" style="color: #0087a8;"></i></a>
+              <a href="myevents/{{i.eventid}}"><i class="fa-solid fa-trash" style="color:red;"></i></a>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

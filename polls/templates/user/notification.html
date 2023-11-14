@@ -71,10 +71,10 @@
               
             </tr>
           </thead>
-          <tbody style="max-height: 150px; overflow-y: scroll">
+          <tbody class="pt-4" style="max-height: 150px; overflow-y: scroll">
             {% for description, date in zipped_data %}
               <tr>
-                  <th scope="row">{{ forloop.counter }}</th>
+                  <th scope="row"><i class="fa-solid fa-circle-dot" style="color: #006eff;"></i></th>
                   <td class="text-justify"><b>{{ description }}</b></td>
                   <td>{{ date }}</td>
                 </tr>

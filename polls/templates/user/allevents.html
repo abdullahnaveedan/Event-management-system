@@ -2,19 +2,32 @@
 {% block title %}
 All Events
 {% endblock title %}
-
 {% block body %}
 
 {% if user.is_authenticated %}
 
+<div class="container-fluid d-flex pt-4" style="background-color: #f3f0f0">
+  <div class="container pt-4 pb-4"style="background:#fff; width:20%; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); border-radius: 12px; height:fit-content;">
+    <h3 class="text-center">Choose Filters</h3>
+    <hr >
+    <form method="GET" class="form d-flex w-100">
+      <input type="date" class="form-control w-100" name="date" aria-describedby="button-addon2">
+      <button class="btn btn-primary" type="submit" id="button-addon2">Search</button>
+    </form>
+    <br>
+    <form method="GET" class="form d-flex w-100">
+      <input type="text" class="form-control w-100" name="location" placeholder="Location" aria-describedby="button-addon3">
+      <button class="btn btn-primary" type="submit" id="button-addon3">Search</button>
+    </form>
+    <a class="btn btn-outline-primary mt-2 " href="/events">Clear Filters</a>
+  </div>
 
-<div class="container-fluid" style="background-color: #f3f0f0">
-  <div class="container">
+
+  <div class="container w-75">
     <div class="row text-center">
       <div
-        class="col-12 my-3 py-1 bg-white overflow-auto"
+        class="col-12 my-3 py-1 bg-white"
         style="
-          max-height: 200px;
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
           border: 1px solid white;
           border-radius: 12px;
@@ -93,10 +106,6 @@ All Events
                   </button> 
               </td>
             </tr>
-          
-      
-     
-    
 
 <div class="modal fade" id="exampleModal{{i.eventid}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -109,7 +118,7 @@ All Events
       </div>
       <form method="POST"> {% csrf_token %}
       <div class="modal-body ">
-        <div class="d-flex">
+        <div class="d-flex invisible">
           <p class="pt-2">Event #:</p>
           <input type="text" class="form-control w-25 ml-4" name="eveid" value = "{{i.eventid}}" readonly>
         </div>
@@ -129,6 +138,7 @@ All Events
   </div>
 </div>
 <!-- MODAL -->
+
 {% endfor %}
 
 

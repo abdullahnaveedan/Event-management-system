@@ -17,5 +17,6 @@ urlpatterns = [
     path("myevents",views.myevents, name="myevents"),
     path("signout", views.signout),
     path("myevents/<int:myid>", views.deleteevent),
+    path("myevents/d-<int:myid>",views.notify)
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from datetime import datetime
+from django.utils import timezone
+from datetime import timedelta
 
 def index(request):
     print(request.user.username)
@@ -19,17 +21,37 @@ def events(request):
         'data' : data
     }
     if request.method == "POST":
-        evid = request.POST.get('eveid')
-        registrar = request.user.username
-        user = registeredevents.objects.get(eventid = evid)
-        registered = user.username
-        notification(description = f"{registrar} registered in your event.",username=registered).save()
-        notification(description = f"You Sucessfully  Registered in {user.eventname} event.",username=registrar).save()
+        evid = int(request.POST.get('eveid'))
+        registrar = request.user
+        try:
+            event_instance = registeredevents.objects.get(eventid=evid)
+            registered = event_instance.username
+            registration_instance = registration(eventid=event_instance, username=registrar)
+            registration_instance.save()
+            notification(description = f"A new user {registrar} registered in your event {event_instance.eventname}.",username=registered).save()
+            notification(description = f"You Sucessfully  Registered in {event_instance.eventname} event.",username=registrar).save()
+            print(event_instance,registrar)
+        except registeredevents.DoesNotExist:
+            registration_instance = None
+     
+    if request.method == "GET":
+        date = request.GET.get("date")
+        location = request.GET.get("location")
+        if date:
+            data = registeredevents.objects.filter(date__icontains = date)
+            context = {
+                'data' : data
+            }
+        elif location:
+            data = registeredevents.objects.filter(location__icontains = location)
+            context = {
+                'data' : data
+            }
 
     return render(request , "user/allevents.html",context)
     
 def notifications(request):
-    data = notification.objects.filter(username=request.user.username)
+    data = notification.objects.filter(username=request.user.username).order_by('-id')
     formatted_datetimes = [entry.datetime.strftime('%Y-%m-%d %I:%M:%S %p') for entry in data]
 
     descriptions = [entry.description for entry in data]
@@ -42,9 +64,7 @@ def notifications(request):
     }
 
     return render(request, "user/notification.html", context)
-
-
-      
+     
 def signin(request):
     if request.method == "POST":
         email = request.POST['email']
@@ -98,8 +118,16 @@ def contactus(request):
     
 def myevents(request):
     data = registeredevents.objects.filter(username = request.user.username)
-    context={
-        'data' : data
+    event_data = []
+    for event in data:
+        registrations_count = registration.objects.filter(eventid=event).count()
+        event_data.append({
+            'event': event,
+            'registrations_count': registrations_count,
+        })
+
+    context = {
+        'combined_data': zip(data, event_data),
     }
     if request.method == "POST":
         eventname = request.POST['eventname']  
@@ -124,4 +152,14 @@ def deleteevent(request,myid):
     event = registeredevents.objects.get(eventid=myid)
     notification(description = f"Your event {event.eventname} is Deleted.",username = request.user.username).save()
     event.delete()
+    return redirect("myevents")
+
+def notify(request,myid):
+    data = registration.objects.filter(eventid = myid)
+    today = timezone.now().date()
+    eventdate = registeredevents.objects.get(eventid = myid)
+    remaining_days = (eventdate.date - today).days
+    if remaining_days > 0:
+        for i in data:
+            notification(description = f"You have {remaining_days} days Left in {eventdate.eventname} Event. Be Ready!",username=i.username).save()
     return redirect("myevents")
