@@ -4,8 +4,6 @@ from urllib.parse import urlparse
 
 import environ
 from google.cloud import secretmanager
-
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -26,7 +24,6 @@ env_file = os.path.join(BASE_DIR, ".env")
 
 if os.path.isfile(env_file):
     # Use a local secret file, if provided
-
     env.read_env(env_file)
 # ...
 elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
@@ -126,17 +123,16 @@ if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
 # Use a in-memory sqlite3 database when testing in CI systems
 # TODO(glasnt) CHECK IF THIS IS REQUIRED because we're setting a val above
 if os.getenv("TRAMPOLINE_CI", None):
-
+    
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '/cloudsql/event-management-system-404210:us-central1:event-instance',
-        'USER': 'event-instance',
-        'PASSWORD': 'Eventmanage00001',
-        'NAME': 'EventManagement',
+        'HOST': '/cloudsql/alfred-event-manager-00001:us-central1:event-management-00001',
+        'USER': 'alfreadems',
+        'PASSWORD': 'Abduijah00001',
+        'NAME': 'alfreadems',
     }
 }
-
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
