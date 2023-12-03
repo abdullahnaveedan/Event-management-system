@@ -135,12 +135,13 @@ def myevents(request):
         location = request.POST['location'] 
         date = request.POST['date'] 
         typeofevent = request.POST['typeofevent'] 
-        # document = request.POST['document'] 
         username = request.user.username
+        # document = request.POST['document'] 
         registeredevents(eventname = eventname, purpose = purpose,location = location, date = date, type = typeofevent,username = username).save()
 
         notification(description = "Your Event is Registered",username=username).save()
         return render(request,"user/thanks.html")
+
     return render(request,"user/myevents.html",context)
 
 def signout(request):
@@ -155,11 +156,28 @@ def deleteevent(request,myid):
     return redirect("myevents")
 
 def notify(request,myid):
+    
     data = registration.objects.filter(eventid = myid)
-    today = timezone.now().date()
-    eventdate = registeredevents.objects.get(eventid = myid)
-    remaining_days = (eventdate.date - today).days
-    if remaining_days > 0:
-        for i in data:
-            notification(description = f"You have {remaining_days} days Left in {eventdate.eventname} Event. Be Ready!",username=i.username).save()
+    if data.count() > 0:
+        today = timezone.now().date()
+        eventdate = registeredevents.objects.get(eventid = myid)
+        remaining_days = (eventdate.date - today).days
+        if remaining_days > 0:
+            for i in data:
+                notification(description = f"You have {remaining_days} days Left in {eventdate.eventname} Event. Be Ready!",username=i.username).save()
+    else:
+        notification(description = f"Reminder Error! You have no Registered Members",username=request.user.username).save()
+
+    return redirect("myevents")
+
+def saverecord(request,myid):
+    if request.method == "POST":
+        getevent = registeredevents.objects.get(eventid = myid)
+        getevent.eventname = request.POST['eventname']
+        getevent.purpose = request.POST['purpose']
+        getevent.location = request.POST['location']
+        getevent.date = request.POST['date']
+        getevent.type = request.POST['typeofevent']
+        getevent.save()
+        notification(description = f"The information of {getevent.eventname} updated Sucessfully.",username=request.user.username).save()
     return redirect("myevents")

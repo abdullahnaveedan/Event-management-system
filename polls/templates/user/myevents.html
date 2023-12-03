@@ -39,10 +39,62 @@
             <td>{{j.registrations_count}}</td>
             
             <td>
-              <a href="myevents/d-{{i.eventid}}"><i class="fa-solid fa-bell fa-sm" style="color: #0087a8;"></i></a>
-              <a href="myevents/{{i.eventid}}"><i class="fa-solid fa-trash" style="color:red;"></i></a>
+              <a data-bs-toggle="modal" data-bs-target="#{{i.eventid}}">
+                <i class="fa-solid fa-pen mr-2" style="color: #000000;"></i>
+              </a>
+                            
+              <a href="myevents/d-{{i.eventid}}"><i class="fa-solid fa-bell fa-sm mr-2" style="color: #0087a8;"></i></a>
+              <a href="myevents/{{i.eventid}}"><i class="fa-solid fa-trash mr-2" style="color:red;"></i></a>
             </td>
           </tr>
+
+          <div class="modal fade" id="{{i.eventid}}" tabindex="-1" aria-labelledby="" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="label">Edit Event Information </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="/myevents/saverecord/e-{{i.eventid}}"> {% csrf_token %}
+                  <div class="modal-body ">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Name</label>
+                        <input type="name" class="form-control" name="eventname" placeholder="Event Name" value="{{i.eventname}}">
+                    </div>
+                    <div class="mb-3">
+                      <label for="" class="form-label">Purpose</label>
+                      <textarea class="form-control" name="purpose" placeholder="e.g. Purpose of event" rows="5" >{{i.purpose}}</textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="" class="form-label">Location</label>
+                      <input type="name" class="form-control" name="location" placeholder="Location" value="{{i.location}}">
+                    </div>
+                    <div class="mb-3 d-flex">
+                      <div class="mr-2">
+                        <label for="" class="form-label">Date</label>
+                        <input type="text" class="form-control" value="{{i.date}}" readonly >    
+                      </div>
+                      <div>
+                        <label for="" class="form-label">Date</label>
+                        <input type="date" class="form-control" name="date" >                        
+                      </div>
+                    </div>
+                    Choose
+                    <select class="form-control" name="typeofevent">
+                      <option value="Meeting" {% if i.type == 'Meeting' %}selected{% endif %}>Meeting</option>
+                      <option value="Conference" {% if i.type == 'Conference' %}selected{% endif %}>Conference</option>
+                      <option value="Workshop" {% if i.type == 'Workshop' %}selected{% endif %}>Workshop</option>
+                    </select>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+                  </div>
+              </form>
+              </div>
+            </div>
+          </div>
+
           {% endfor %}
         </tbody>
       </table>
@@ -63,13 +115,10 @@
           </button>
         </div>
         <div class="modal-body ">
-          
-            <div class="mb-3">
-                <label for="" class="form-label">Name</label>
-                <input type="name" class="form-control" name="eventname" placeholder="Event Name">
-              </div>
-              
-      
+          <div class="mb-3">
+              <label for="" class="form-label">Name</label>
+              <input type="name" class="form-control" name="eventname" placeholder="Event Name">
+          </div>
           <div class="mb-3">
             <label for="" class="form-label">Purpose</label>
             <textarea class="form-control" name="purpose" placeholder="e.g. Purpose of event" rows="5" ></textarea>
@@ -106,4 +155,3 @@
 </form>
 
 {% endblock body %}
-
